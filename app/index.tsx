@@ -12,6 +12,8 @@ import {
   Pressable,
 } from "react-native";
 import Entypo from "@expo/vector-icons/Entypo";
+import { RandomLetter } from "@/components/random-letter";
+
 export default function Index() {
   const [name, setName] = useState<string>("");
   const { addName, names, removeName } = useGameStore((state) => state);
