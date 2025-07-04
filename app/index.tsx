@@ -9,11 +9,13 @@ import {
   Platform,
 } from "react-native";
 import { GlitchLetter } from "@/components/glitch-letter";
-import { Guess } from "@/components/Guess";
+import { Guess } from "@/components/guess";
+import { Timer } from "@/components/timer";
 
 export default function Index() {
-  const [name, setName] = useState<string>("");
-  const { addGuess, guesses, removeGuess, letter, generateLetter } =
+  const [name, setName] = useState("");
+  const [timeUp, setTimeUp] = useState(false);
+  const { addGuess, guesses, removeGuess, letter, initializeGame, duration } =
     useGameStore((state) => state);
 
   function handleSubmit() {
@@ -23,16 +25,30 @@ export default function Index() {
   }
 
   useEffect(() => {
-    generateLetter();
+    initializeGame();
   }, []);
 
   return (
     <KeyboardAvoidingView
-      style={{ flex: 1, margin: 10, padding: 10, gap: 4 }}
+      style={{ flex: 1, margin: 10, padding: 10, gap: 10 }}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       keyboardVerticalOffset={20}
     >
-      <GlitchLetter target={letter} />
+      <View
+        style={{
+          flexDirection: "row",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
+        <GlitchLetter target={letter} />
+        <Timer
+          duration={duration}
+          onComplete={() => {
+            setTimeUp(true);
+          }}
+        />
+      </View>
       <View style={{ alignItems: "center" }}>
         <TextInput
           style={styles.nameInput}
@@ -40,6 +56,7 @@ export default function Index() {
           keyboardType="default"
           autoComplete="off"
           value={name}
+          editable={!timeUp}
           onChangeText={setName}
           returnKeyType="done"
           returnKeyLabel="Done"

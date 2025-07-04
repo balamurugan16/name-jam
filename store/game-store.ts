@@ -8,15 +8,17 @@ export type GuessType = {
 type GameStore = {
   letter: string;
   guesses: GuessType[];
+  duration: number;
   addGuess: (name: string) => void;
   removeGuess: (id: number) => void;
-  generateLetter: () => void;
+  initializeGame: () => void;
 };
 
 export const useGameStore = create<GameStore>((set) => ({
   // this generates a random character for the set
   letter: "",
   guesses: [],
+  duration: 15,
   addGuess(name) {
     set((state) => {
       const guess = {
@@ -32,7 +34,7 @@ export const useGameStore = create<GameStore>((set) => ({
       return { guesses: state.guesses.filter((_, idx) => idx !== id) };
     });
   },
-  generateLetter() {
+  initializeGame() {
     set(() => ({
       letter: String.fromCharCode(65 + (Math.ceil(Math.random() * 100) % 26)),
     }));
