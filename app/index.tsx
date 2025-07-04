@@ -1,38 +1,39 @@
 import { useGameStore } from "@/store/game-store";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   TextInput,
-  Text,
   View,
   StyleSheet,
   FlatList,
   KeyboardAvoidingView,
   Platform,
-  ScrollView,
-  Pressable,
 } from "react-native";
-import Entypo from "@expo/vector-icons/Entypo";
+import { GlitchLetter } from "@/components/glitch-letter";
+import { Guess } from "@/components/Guess";
+
 export default function Index() {
   const [name, setName] = useState<string>("");
-  const { addName, names, removeName } = useGameStore((state) => state);
+  const { addGuess, guesses, removeGuess, letter, generateLetter } =
+    useGameStore((state) => state);
 
   function handleSubmit() {
     if (name.trim().length === 0) return;
-    addName(name.trim());
+    addGuess(name.trim());
     setName("");
   }
 
+  useEffect(() => {
+    generateLetter();
+  }, []);
+
   return (
     <KeyboardAvoidingView
-      style={{ flex: 1, margin: 10, padding: 10 }}
+      style={{ flex: 1, margin: 10, padding: 10, gap: 4 }}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       keyboardVerticalOffset={20}
     >
-      <View
-        style={{
-          alignItems: "center",
-        }}
-      >
+      <GlitchLetter target={letter} />
+      <View style={{ alignItems: "center" }}>
         <TextInput
           style={styles.nameInput}
           placeholder="Start typing..."
@@ -46,34 +47,17 @@ export default function Index() {
           submitBehavior="submit"
         />
       </View>
-      <ScrollView>
-        <FlatList
-          contentContainerStyle={{
-            padding: 20,
-            gap: 10,
-            flexGrow: 1,
-          }}
-          data={names}
-          renderItem={({ item, index }) => (
-            <View
-              style={{
-                padding: 8,
-                borderWidth: 1,
-                borderColor: "black",
-                borderRadius: 5,
-                flexDirection: "row",
-                justifyContent: "space-between",
-                alignItems: "center",
-              }}
-            >
-              <Text>{item}</Text>
-              <Pressable onPress={() => removeName(index)}>
-                <Entypo name="cross" size={24} color="red" />
-              </Pressable>
-            </View>
-          )}
-        />
-      </ScrollView>
+      <FlatList
+        contentContainerStyle={{
+          padding: 20,
+          gap: 10,
+          flexGrow: 1,
+        }}
+        data={guesses}
+        renderItem={({ item, index }) => (
+          <Guess guess={item} handleRemove={() => removeGuess(index)} />
+        )}
+      />
     </KeyboardAvoidingView>
   );
 }
