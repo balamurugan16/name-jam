@@ -1,4 +1,4 @@
-import { type GuessType } from "@/store/game-store";
+import { type IGuess } from "@/lib/types";
 import { View, Text, Pressable } from "react-native";
 import Entypo from "@expo/vector-icons/Entypo";
 
@@ -6,7 +6,7 @@ export const Guess = ({
   guess,
   handleRemove,
 }: {
-  guess: GuessType;
+  guess: IGuess;
   handleRemove: () => void;
 }) => {
   return (

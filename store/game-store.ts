@@ -1,42 +1,24 @@
 import { create } from "zustand";
 
-export type GuessType = {
-  name: string;
-  isValid: boolean;
-};
-
-type GameStore = {
-  letter: string;
-  guesses: GuessType[];
+type State = {
   duration: number;
-  addGuess: (name: string) => void;
-  removeGuess: (id: number) => void;
-  initializeGame: () => void;
+  genre: string;
+  numberOfRounds: number;
 };
 
-export const useGameStore = create<GameStore>((set) => ({
-  // this generates a random character for the set
-  letter: "",
-  guesses: [],
-  duration: 15,
-  addGuess(name) {
-    set((state) => {
-      const guess = {
-        name,
-        isValid: name.charAt(0) === state.letter,
-      } satisfies GuessType;
+interface Action {
+  initializeGame: (
+    duration: number,
+    genre: string,
+    numberOfRounds: number,
+  ) => void;
+}
 
-      return { guesses: [guess, ...state.guesses] };
-    });
-  },
-  removeGuess(id) {
-    set((state) => {
-      return { guesses: state.guesses.filter((_, idx) => idx !== id) };
-    });
-  },
-  initializeGame() {
-    set(() => ({
-      letter: String.fromCharCode(65 + (Math.ceil(Math.random() * 100) % 26)),
-    }));
+export const useGameStore = create<State & Action>((set) => ({
+  duration: 0,
+  genre: "",
+  numberOfRounds: 0,
+  initializeGame(duration, genre, numberOfRounds) {
+    set(() => ({ duration, genre, numberOfRounds }));
   },
 }));
